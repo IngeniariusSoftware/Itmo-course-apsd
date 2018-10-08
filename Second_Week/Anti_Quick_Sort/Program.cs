@@ -5,7 +5,7 @@
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             StreamReader input = new StreamReader("input.txt");
             StreamWriter output = new StreamWriter("output.txt");
