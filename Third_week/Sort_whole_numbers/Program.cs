@@ -2,82 +2,88 @@
 {
     using System;
     using System.IO;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Security.Cryptography.X509Certificates;
+    using System.Linq;
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
+            //Stopwatch timer = new Stopwatch();
+            //timer.Start();
             StreamReader input = new StreamReader("input.txt");
             StreamWriter output = new StreamWriter("output.txt");
             input.ReadLine();
             string[] tokens = input.ReadLine().Split(' ');
-            List<int> firstList = new List<int>();
-            //foreach (string token in tokens)
-            //{
-            //    firstList.Add(int.Parse(token));
-            //}
-
-            for (int i = 0; i < 300; i++)
+            int[] firstArray = new int[tokens.Count()];
+            for (int i = 0; i < tokens.Count(); i++)
             {
-                firstList.Add(i);
+                firstArray[i] = int.Parse(tokens[i]);
             }
 
             tokens = input.ReadLine().Split(' ');
-            List<int> secondList = new List<int>();
-            //foreach (string token in tokens)
-            //{
-            //    secondList.Add(int.Parse(token));
-            //}
-
-            for (int i = 0; i < 300; i++)
+            int[] secondArray = new int[tokens.Count()];
+            for (int i = 0; i < tokens.Count(); i++)
             {
-                secondList.Add(i);
+                secondArray[i] = int.Parse(tokens[i]);
             }
 
             input.Close();
-            firstList.Sort();
-            secondList.Sort();
-            int[] pointers = new int[secondList.Count];
-
-            bool end = false;
-            int queue = 1;
-            long sum = 0;
-            while (!end)
+            int[] countNumbers = new int[24415];
+            for (int i = 0; i < firstArray.Length; i++)
             {
-                int max = 0;
-                for (int i = 1; i < firstList.Count; i++)
+                for (int j = 0; j < secondArray.Length; j++)
                 {
-                    if (pointers[max] == secondList.Count
-                        || (pointers[max] < secondList.Count && pointers[i] < secondList.Count
-                                                             && firstList[i] * secondList[pointers[i]]
-                                                             < firstList[max] * secondList[pointers[max]]))
-                    {
-                        max = i;
-                    }
-                }
-
-                if (pointers[max] == secondList.Count)
-                {
-                    end = true;
-                }
-                else
-                {
-                    if (queue % 10 == 1)
-                    {
-                        sum += firstList[max] * secondList[pointers[max]];
-                    }
-
-                    pointers[max]++;
-                    queue++;
+                    countNumbers[(firstArray[i] * secondArray[j]) >> 16]++;
                 }
             }
 
-            Console.WriteLine(timer.Elapsed);
+            for (int i = 1; i < countNumbers.Length; i++)
+            {
+                countNumbers[i] += countNumbers[i - 1];
+            }
+
+            long[] finalArray = new long[firstArray.Length * secondArray.Length];
+            
+            for (int i = 0; i < firstArray.Length; i++)
+            {
+                for (int j = 0; j < secondArray.Length; j++)
+                {
+                    finalArray[countNumbers[(firstArray[i] * secondArray[j]) >> 16] - 1] =
+                        firstArray[i] * secondArray[j];
+                    countNumbers[(firstArray[i] * secondArray[j]) >> 16]--;
+                }
+            }
+
+            Array.Sort(finalArray);
+            long sum = 0;
+            for (int i = 0; i < finalArray.Length; i += 10)
+            {
+                sum += finalArray[i];
+            }
+
+            //long[][] finalArray = new long[countNumbers.Length][];
+            //for (int i = 0; i < countNumbers.Length; i++)
+            //{
+            //    finalArray[i] = new long[countNumbers[i]];
+            //}
+
+            //for (int i = 0; i < firstArray.Length; i++)
+            //{
+            //    for (int j = 0; j < secondArray.Length; j++)
+            //    {
+            //        finalArray[(firstArray[i] * secondArray[j]) >> 16][
+            //            countNumbers[(firstArray[i] * secondArray[j]) >> 16] - 1] = firstArray[i] * secondArray[j];
+            //        countNumbers[(firstArray[i] * secondArray[j]) >> 16]--;
+            //    }
+            //}
+
+            //for (int i = 0; i < finalArray.Length; i++)
+            //{
+            //    Array.Sort(finalArray[i]);
+            //}
+
+            //Console.WriteLine(timer.Elapsed);
             output.WriteLine(sum);
             output.Close();
         }
