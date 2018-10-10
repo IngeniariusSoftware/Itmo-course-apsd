@@ -86,7 +86,7 @@
                 sum += (byteArray[i].Item4 << 24) + (byteArray[i].Item3 << 16) + (byteArray[i].Item2 << 8)
                        + byteArray[i].Item1;
             }
-
+            
             output.WriteLine(sum);
             output.Close();
         }
