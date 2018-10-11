@@ -1,76 +1,104 @@
 ﻿namespace Digital_sorting
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     class Program
     {
         static void Main()
         {
-
-            Stopwatch timer =new Stopwatch();
-            timer.Start();
             StreamReader input = new StreamReader("input.txt");
             StreamWriter output = new StreamWriter("output.txt");
-            Random rnd = new Random();
-
-            
-
-            //for (int i = 0; i < 6000; i++)
-            //{
-            //    for (int j = 0; j < 6000; j++)
-            //    {
-            //        if (j != 5999)
-            //        {
-            //        output.Write("{0} ", (char)rnd.Next(97, 122));
-            //        }
-            //        else
-            //        {
-            //            output.Write("{0}"(char)rnd.Next(97, 122));
-            //        }
-            //    }
-
-            //    if (i != 5999)
-            //    {
-            //        output.WriteLine();
-            //    }
-            //}
-            
-
-
             string[] tokens = input.ReadLine().Split(' ');
-            int strLength = int.Parse(tokens[1]);
-            int maxSteps = int.Parse(tokens[2]);
-            int[] positions = new int[strLength];
-            int[] countNumbers = new int[26];
-            for (int y = 0; y < maxSteps; y++)
+            int strLength = int.Parse(tokens[0]), strCount = int.Parse(tokens[1]), maxSteps = int.Parse(tokens[2]);
+
+            if ((double)(strLength / strCount) <= 50)
             {
-                countNumbers = new int[26];
-                tokens = input.ReadLine().Split(' ');
-                for (int x = 0; x < tokens.Length; x++)
+                #region Сортировка подсчетом
+
+                int[] positions = new int[strLength * 2];
+                int[] countNumbers = new int[26 * maxSteps];
+                char[][] letters = new char[maxSteps][];
+                for (int i = 0; i < strLength; i++)
                 {
-                    countNumbers[(byte)tokens[x][0] - 97]++;
+                    positions[i] = i;
                 }
 
-                for (int i = 1; i < countNumbers.Length; i++)
+                for (int y = 0; y < strCount - maxSteps; y++)
                 {
-                    countNumbers[i] += countNumbers[i - 1];
+                    input.ReadLine();
                 }
 
-                //for (int i = tokens.Length - 1; i > -1; i--)
-                //{
-                //    positions[countNumbers[(byte)tokens[i][0] - 97]] = i;
-                //}
+                for (int y = 0; y < maxSteps; y++)
+                {
+                    letters[y] = input.ReadLine().ToCharArray();
+                }
+
+                for (int y = 0; y < maxSteps; y++)
+                {
+
+                    for (int x = 0; x < strLength; x++)
+                    {
+                        countNumbers[(byte)letters[maxSteps - 1 - y][positions[x + strLength * (y % 2)]] - 97
+                                     + 26 * y]++;
+                    }
+
+                    for (int i = 1; i < 26; i++)
+                    {
+                        countNumbers[i + 26 * y] += countNumbers[i - 1 + 26 * y];
+                    }
+
+                    for (int x = strLength - 1; x > -1; x--)
+                    {
+                        positions[countNumbers[(byte)letters[maxSteps - 1 - y][positions[x + strLength * (y % 2)]] - 97
+                                               + 26 * y] - 1 + strLength * ((y + 1) % 2)] =
+                            positions[x + strLength * (y % 2)];
+                        countNumbers[(byte)letters[maxSteps - 1 - y][positions[x + strLength * (y % 2)]] - 97
+                                     + 26 * y]--;
+                    }
+                }
+
+                input.Close();
+
+                for (int i = 0; i < strLength; i++)
+                {
+                    output.Write("{0} ", positions[i + ((maxSteps) % 2 * strLength)] + 1);
+                }
+
+                #endregion
+            }
+            else
+            {
+                (string, int)[] strings = new (string, int) [strLength];
+                for (int y = 0; y < strCount - maxSteps; y++)
+                {
+                    input.ReadLine();
+                }
+
+                char[][] letters = new char[maxSteps][];
+                for (int y = 0; y < maxSteps; y++)
+                {
+                    char[] charArray = input.ReadLine().ToCharArray();
+                    for (int i = 0; i < strLength; i++)
+                    {
+                        strings[i].Item1 = strings[i].Item1 + charArray[i];
+                    }
+                }
+
+                for (int i = 0; i < strLength; i++)
+                {
+                    strings[i].Item2 = i;
+                }
+
+                Array.Sort(strings);
+
+                for (int i = 0; i < strLength; i++)
+                {
+                    output.Write("{0} ", strings[i].Item2 + 1);
+                }
             }
 
-            Console.WriteLine(timer.Elapsed);
-
-            input.Close();
+            output.Close();
         }
     }
 }
