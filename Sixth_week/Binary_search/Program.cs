@@ -48,7 +48,7 @@
             }
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             StreamReader input = new StreamReader("input.txt");
             int length = int.Parse(input.ReadLine());
