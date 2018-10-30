@@ -1,50 +1,60 @@
 ﻿namespace Binary_search
 {
+    using System.Collections.Generic;
     using System.IO;
 
     class Program
     {
+        private static Dictionary<int, (int, int)> _requestHash = new Dictionary<int, (int, int)>();
+
         private static (int, int) BinarySearch(int element, int leftBoard, int rightBoard, int[] array)
         {
-            while (leftBoard < rightBoard)
+            if (_requestHash.ContainsKey(element))
             {
-                int middleIndex = (leftBoard + rightBoard) / 2;
-                if (array[middleIndex] < element)
-                {
-                    leftBoard = middleIndex + 1;
-                }
-                else
-                {
-                    if (array[middleIndex] > element)
-                    {
-                        rightBoard = middleIndex - 1;
-                    }
-                    else
-                    {
-                        // Двоичный поиск границ, либо запоминаем позиции (лучше все и сразу)
-                        int firstPosition = middleIndex, lastPosition = middleIndex;
-                        while (firstPosition > 0 && array[firstPosition - 1] == array[middleIndex])
-                        {
-                            --firstPosition;
-                        }
-
-                        while (lastPosition < rightBoard && array[lastPosition + 1] == array[middleIndex])
-                        {
-                            ++lastPosition;
-                        }
-
-                        return (firstPosition + 1, lastPosition + 1);
-                    }
-                }
-            }
-
-            if (array[leftBoard] == element)
-            {
-                return (leftBoard + 1, leftBoard + 1);
+                return _requestHash[element];
             }
             else
             {
-                return (-1, -1);
+                while (leftBoard < rightBoard)
+                {
+                    int middleIndex = (leftBoard + rightBoard) / 2;
+                    if (array[middleIndex] < element)
+                    {
+                        leftBoard = middleIndex + 1;
+                    }
+                    else
+                    {
+                        if (array[middleIndex] > element)
+                        {
+                            rightBoard = middleIndex - 1;
+                        }
+                        else
+                        {
+                            int firstPosition = middleIndex, lastPosition = middleIndex;
+                            while (firstPosition > 0 && array[firstPosition - 1] == array[middleIndex])
+                            {
+                                --firstPosition;
+                            }
+
+                            while (lastPosition < rightBoard && array[lastPosition + 1] == array[middleIndex])
+                            {
+                                ++lastPosition;
+                            }
+
+                            _requestHash[element] = (firstPosition + 1, lastPosition + 1);
+                            return _requestHash[element];
+                        }
+                    }
+                }
+
+                if (array[leftBoard] == element)
+                {
+                    return (leftBoard + 1, leftBoard + 1);
+                }
+                else
+                {
+                    return (-1, -1);
+                }
             }
         }
 
