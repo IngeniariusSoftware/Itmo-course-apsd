@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace Check_balance
 {
+    using System.IO;
+
     class Program
     {
-        
-        static void Main(string[] args)
+
+
+        public static void Main(string[] args)
         {
-                
+            
         }
     }
 }
