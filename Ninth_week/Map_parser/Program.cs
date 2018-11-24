@@ -14,22 +14,36 @@
             string map = input.ReadLine().Replace(" ", "");
             input.Close();
             var letterPositions = new List<int>[26];
-            for (int i = 0; i < map.Length; i++)
-            {
-                if (map[i] - 96 >= 0)
-                {
-                    letterPositions[map[i] - 96].Add(i);
-                }
-            }
-
-            long combinations = 0;
             for (int i = 0; i < 26; i++)
             {
-                combinations += 2;
+                letterPositions[i] = new List<int>();
+            }
+
+            for (int i = 0; i < map.Length; i++)
+            {
+                letterPositions[map[i] - 97].Add(i);
             }
 
             StreamWriter output = new StreamWriter("output.txt");
-            output.WriteLine();
+
+            long allCombinations = 0;
+            for (int i = 0; i < 26; i++)
+            {
+                for (int j = 0; j < letterPositions[i].Count; j++)
+                {
+                    long combinations = 0;
+                    for (int k = j + 1; k < letterPositions[i].Count; k++)
+                    {
+                        combinations += letterPositions[i][k] - letterPositions[i][j] - 1;
+                    }
+
+                    allCombinations += combinations;
+                    output.WriteLine((char)(97 + i) + ": " + combinations);
+                }
+
+            }
+
+            output.WriteLine(allCombinations);
             output.Close();
         }
     }
