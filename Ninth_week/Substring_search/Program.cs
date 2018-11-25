@@ -37,7 +37,7 @@
         private static long[] GetHashArray(int subStrLength, string str)
         {
             long[] hashArray = new long[str.Length + 1 - subStrLength];
-            long lengthAlphabet = 53, maxHash = long.MaxValue;
+            long lengthAlphabet = 53;
             for (int i = 0; i < subStrLength; i++)
             {
                 hashArray[0] = ((GetPow(lengthAlphabet, subStrLength - i - 1) * (str[i] - 65)) + hashArray[0])
